@@ -37,7 +37,7 @@ public class GizmoManager : MonoBehaviour
                 Node newNode = new Node(position, gridIndex, false, 1);
                 bool isObstacle = CheckForObstacle(newNode);
                 newNode.isObstacle = isObstacle;
-                GameObject worldNode = Instantiate(nodePrefab, newNode.position, Quaternion.identity);
+                GameObject worldNode = Instantiate(nodePrefab, newNode.worldPosition, Quaternion.identity);
                 worldNode.GetComponent<SpriteRenderer>().color = newNode.isObstacle ? Color.magenta : Color.red;
                 nodes[gridIndex] = newNode;
             }
@@ -51,7 +51,7 @@ public class GizmoManager : MonoBehaviour
 
     private bool CheckForObstacle(Node newNode)
     {
-        Collider2D col = Physics2D.OverlapCircle(newNode.position, nodeSize / 2, obstacle);
+        Collider2D col = Physics2D.OverlapCircle(newNode.worldPosition, nodeSize / 2, obstacle);
         return col != null;
     }
 
@@ -71,7 +71,7 @@ public class GizmoManager : MonoBehaviour
 
         foreach (Vector2Int direction in direcions)
         {
-            Vector2Int index = node.worldPosition + direction;
+            Vector2Int index = node.gridIndex + direction;
             if (nodes.ContainsKey(index))
                 node.neighbors.Add(nodes[index]);
         }
