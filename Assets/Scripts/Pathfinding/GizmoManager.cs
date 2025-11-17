@@ -5,6 +5,8 @@ using System;
 
 public class GizmoManager : MonoBehaviour
 {
+    //public static GizmoManager Instance;
+
     [SerializeField] private GameObject ground;
     [SerializeField] private GameObject nodePrefab;
     [SerializeField] private int nodeSize;
@@ -13,6 +15,16 @@ public class GizmoManager : MonoBehaviour
     private Dictionary<Vector2Int, Node> nodes;
     private Vector3 originMin;
     private Vector3 originMax;
+
+    private void Awake()
+    {
+        //if(Instance != null && Instance != this)
+        //{
+        //    Destroy(gameObject);
+        //    Instance = null;
+        //}
+        //Instance = this;
+    }
 
     private void Start()
     {
@@ -35,8 +47,7 @@ public class GizmoManager : MonoBehaviour
 
                 Vector3 position = new Vector3(worldX, worldY, 0);
                 Node newNode = new Node(position, gridIndex, false, 1);
-                bool isObstacle = CheckForObstacle(newNode);
-                newNode.isObstacle = isObstacle;
+                AssignCost(newNode);
                 GameObject worldNode = Instantiate(nodePrefab, newNode.worldPosition, Quaternion.identity);
                 worldNode.GetComponent<SpriteRenderer>().color = newNode.isObstacle ? Color.magenta : Color.red;
                 nodes[gridIndex] = newNode;
@@ -49,10 +60,19 @@ public class GizmoManager : MonoBehaviour
         }
     }
 
-    private bool CheckForObstacle(Node newNode)
+    private void AssignCost(Node newNode)
     {
         Collider2D col = Physics2D.OverlapCircle(newNode.worldPosition, nodeSize / 2, obstacle);
-        return col != null;
+
+        if (col == null) return;
+
+        TileCostProvider provider = col.GetComponent<TileCostProvider>();
+
+        if(provider != null)
+        {
+            newNode.cost = provider.tileCost.cost;
+            newNode.isObstacle = provider.tileCost.isObstacle;
+        }
     }
 
     private void AddNeighbors(Node node)
@@ -74,6 +94,19 @@ public class GizmoManager : MonoBehaviour
             Vector2Int index = node.gridIndex + direction;
             if (nodes.ContainsKey(index))
                 node.neighbors.Add(nodes[index]);
+        }
+    }
+
+    public void ResetAllNodes()
+    {
+        if (nodes.Count == 0)
+            Debug.LogError("No nodes");
+
+        foreach (Node node in nodes.Values)
+        {
+            node.parent = null;
+            node.gCost = float.MaxValue;
+            node.hCost = 0;
         }
     }
 
