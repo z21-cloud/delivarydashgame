@@ -10,7 +10,10 @@ public class AStar : MonoBehaviour
     public List<Node> SearchPath(Node startNode, Node goalNode)
     {
         if (startNode == null || goalNode == null)
+        {
             Debug.LogWarning("Goal node or stat Node is null");
+            return null;
+        }
 
         if(startNode == goalNode)
         {
@@ -20,14 +23,14 @@ public class AStar : MonoBehaviour
         GizmoLocator.GizmoManager.ResetAllNodes();
         queue = new PriorityQueue<Node>();
 
-        startNode.gCost = 0;
+        startNode.gCost = 0; // стоимость от старта до текущей клетки
         startNode.hCost = GetHeuristic(startNode, goalNode); //эвристика
         startNode.parent = null;
         queue.Enqueue(startNode, startNode.fCost); // 0 + hCost
 
         while(queue.Count > 0)
         {
-            Node current = queue.Dequeu();
+            Node current = queue.Dequeue();
 
             if(current == goalNode)
                 return CreatePath(current);
@@ -52,6 +55,7 @@ public class AStar : MonoBehaviour
             }
         }
 
+        Debug.LogWarning("Path not found");
         return null;
     }
 

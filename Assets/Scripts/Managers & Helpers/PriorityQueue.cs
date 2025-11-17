@@ -13,7 +13,7 @@ public class PriorityQueue<T>
         HeapUp(heap.Count - 1);
     }
 
-    public T Dequeu()
+    public T Dequeue()
     {
         T rootItem = heap[0].item;
         heap[0] = heap[heap.Count - 1];

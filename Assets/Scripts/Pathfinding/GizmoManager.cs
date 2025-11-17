@@ -48,8 +48,8 @@ public class GizmoManager : MonoBehaviour
                 Vector3 position = new Vector3(worldX, worldY, 0);
                 Node newNode = new Node(position, gridIndex, false, 1);
                 AssignCost(newNode);
-                GameObject worldNode = Instantiate(nodePrefab, newNode.worldPosition, Quaternion.identity);
-                worldNode.GetComponent<SpriteRenderer>().color = newNode.isObstacle ? Color.magenta : Color.red;
+                //GameObject worldNode = Instantiate(nodePrefab, newNode.worldPosition, Quaternion.identity);
+                //worldNode.GetComponent<SpriteRenderer>().color = newNode.isObstacle ? Color.magenta : Color.red;
                 nodes[gridIndex] = newNode;
             }
         }
