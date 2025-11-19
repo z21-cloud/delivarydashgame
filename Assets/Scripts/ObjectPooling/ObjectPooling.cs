@@ -23,7 +23,7 @@ public class ObjectPooling<T> where T : MonoBehaviour
 
     private T CreateNewObject()
     {
-        var obj = GameObject.Instantiate(prefab);
+        var obj = GameObject.Instantiate(prefab, parent);
         obj.gameObject.SetActive(false);
         objects.Add(obj);
         return obj;
@@ -31,30 +31,18 @@ public class ObjectPooling<T> where T : MonoBehaviour
 
     public T Get()
     {
-        T obj = null;
-
-        for (int i = objects.Count - 1; i >= 0; i--)
+        foreach (var obj in objects)
         {
-            if (objects[i] != null)
+            if(obj != null && !obj.gameObject.activeInHierarchy)
             {
-                obj = objects[i];
-                objects.RemoveAt(i);
-                break;
-            }
-            else
-            {
-                objects.RemoveAt(i);
+                obj.gameObject.SetActive(true);
+                return obj;
             }
         }
 
-        if(obj == null)
-        {
-            obj = CreateNewObject();
-            objects.RemoveAt(objects.Count - 1);
-        }
-
-        obj.gameObject.SetActive(true);
-        return obj;
+        var newObj = CreateNewObject();
+        newObj.gameObject.SetActive(true);
+        return newObj;
     }
 
     public void Release(T obj)

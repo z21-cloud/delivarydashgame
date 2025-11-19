@@ -12,7 +12,7 @@ public class Package : MonoBehaviour
 
     private void PackagePickedUp()
     {
-        Destroy(gameObject);
+        PoolManager.Instance.ReturnPackage(this);
     }
 
     private void OnDisable()

@@ -11,7 +11,7 @@ public class Driver : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.GetComponent<Package>())
+        if(other.GetComponent<Package>() && !hasPackage)
         {
             hasPackage = true;              //  подобрать пакет
             PlayerPackagePickUp?.Invoke();  //  передать информацию пакету, что он подобран

@@ -6,8 +6,13 @@ public class PoolManager : MonoBehaviour
 {
     public static PoolManager Instance { get; private set; }
 
+    [Header("Package Pool")]
     [SerializeField] private Package packagePrefab;
+    [SerializeField] private int packagePoolSize = 10;
+
+    [Header("Customer Pool")]
     [SerializeField] private Customer customerPrefab;
+    [SerializeField] private int customerPoolSize = 10;
 
     private ObjectPooling<Package> packagePool;
     private ObjectPooling<Customer> customerPool;
@@ -17,18 +22,18 @@ public class PoolManager : MonoBehaviour
         if(Instance != null && Instance != this)
         {
             Destroy(gameObject);
-            Instance = null;
+            return;
         }
         Instance = this;
     }
 
     private void Start()
     {
-        packagePool = new ObjectPooling<Package>(packagePrefab, 10, transform);
-        customerPool = new ObjectPooling<Customer>(customerPrefab, 10, transform);
+        packagePool = new ObjectPooling<Package>(packagePrefab, packagePoolSize, transform);
+        customerPool = new ObjectPooling<Customer>(customerPrefab, customerPoolSize, transform);
     }
 
-    public void SpawnPackages(Vector3 position)
+    public void SpawnPackage(Vector3 position)
     {
         Package package = packagePool.Get();
         package.transform.position = position;
@@ -37,5 +42,16 @@ public class PoolManager : MonoBehaviour
     public void ReturnPackage(Package package)
     {
         packagePool.Release(package);
+    }
+
+    public void SpawnCustomer(Vector3 position)
+    {
+        Customer customer = customerPool.Get();
+        customer.transform.position = position;
+    }
+
+    public void ReturnCustomer(Customer customer)
+    {
+        customerPool.Release(customer);
     }
 }

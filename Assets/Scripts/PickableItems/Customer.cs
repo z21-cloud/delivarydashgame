@@ -12,7 +12,7 @@ public class Customer : MonoBehaviour
 
     private void PackageDelivered()
     {
-        Destroy(gameObject);
+        PoolManager.Instance.ReturnCustomer(this);
     }
 
     private void OnDisable()
