@@ -7,16 +7,16 @@ public class Customer : MonoBehaviour
 {
     private void OnEnable()
     {
-        Driver.PlayerPackageDelivered += PackageDelivered;        
+        Driver.PackageEffectsDisable += PackageDelivered;        
     }
 
     private void PackageDelivered()
     {
-        PoolManager.Instance.ReturnCustomer(this);
+        PoolManager.Instance.Return(this);
     }
 
     private void OnDisable()
     {
-        Driver.PlayerPackageDelivered -= PackageDelivered;
+        Driver.PackageEffectsDisable -= PackageDelivered;
     }
 }

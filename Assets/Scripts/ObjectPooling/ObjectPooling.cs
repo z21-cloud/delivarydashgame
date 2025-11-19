@@ -54,4 +54,12 @@ public class ObjectPooling<T> where T : MonoBehaviour
             objects.Add(obj);
         }
     }
+
+    public void ClearPool()
+    {
+        foreach (T item in objects)
+        {
+            if (item.gameObject.activeInHierarchy) item.gameObject.SetActive(false);
+        }
+    }
 }

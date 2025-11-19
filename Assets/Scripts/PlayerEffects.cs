@@ -14,8 +14,8 @@ public class PlayerEffects : MonoBehaviour
 
     private void OnEnable()
     {
-        Driver.PlayerPackagePickUp += EnableEffect;
-        Driver.PlayerPackageDelivered += DisableEffect;
+        Driver.PackageEffectsEnable += EnableEffect;
+        Driver.PackageEffectsDisable += DisableEffect;
     }
 
     private void EnableEffect()
@@ -30,7 +30,7 @@ public class PlayerEffects : MonoBehaviour
 
     private void OnDisable()
     {
-        Driver.PlayerPackagePickUp -= EnableEffect;
-        Driver.PlayerPackageDelivered -= DisableEffect;
+        Driver.PackageEffectsEnable -= EnableEffect;
+        Driver.PackageEffectsDisable -= DisableEffect;
     }
 }

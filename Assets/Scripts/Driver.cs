@@ -2,28 +2,45 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using NUnit.Framework;
 
 public class Driver : MonoBehaviour
 {
-    public static event Action PlayerPackagePickUp;
-    public static event Action PlayerPackageDelivered;
-    private bool hasPackage = false;
+    public static event Action PackageEffectsEnable;
+    public static event Action PackageEffectsDisable;
+    public bool HasPackage { get; private set; }
+
+    private void OnEnable()
+    {
+        Trap.PlayerFellTrap += DeletePackage;
+    }
+
+    private void DeletePackage()
+    {
+        HasPackage = false;
+        PackageEffectsDisable?.Invoke();   //  передать информацию клиенту, что пакет передался
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.GetComponent<Package>() && !hasPackage)
+        if(other.GetComponent<Package>() && !HasPackage)
         {
-            hasPackage = true;              //  подобрать пакет
-            PlayerPackagePickUp?.Invoke();  //  передать информацию пакету, что он подобран
+            HasPackage = true;              //  подобрать пакет
+            PackageEffectsEnable?.Invoke();  //  передать информацию пакету, что он подобран
             //  передать информацию менеджеру, что игрок подобрал пакет (для спауна противников)
             //  воспроизвести эффект и анимацию
         }
 
-        if(other.GetComponent<Customer>() && hasPackage)
+        if(other.GetComponent<Customer>() && HasPackage)
         {
-            hasPackage = false;
+            HasPackage = false;
             //  воспроизвести эффект и анимаацию
-            PlayerPackageDelivered?.Invoke();   //  передать информацию клиенту, что пакет передался
+            PackageEffectsDisable?.Invoke();   //  передать информацию клиенту, что пакет передался
         }
+    }
+
+    private void OnDisable()
+    {
+        Trap.PlayerFellTrap -= DeletePackage;
     }
 }

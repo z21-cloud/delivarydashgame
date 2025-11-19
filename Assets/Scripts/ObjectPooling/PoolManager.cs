@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class PoolManager : MonoBehaviour
 {
@@ -14,8 +15,15 @@ public class PoolManager : MonoBehaviour
     [SerializeField] private Customer customerPrefab;
     [SerializeField] private int customerPoolSize = 10;
 
+    [Header("Traps Pool")]
+    [SerializeField] private Trap trapPrefab;
+    [SerializeField] private int trapPoolSize = 6;
+
+    private Dictionary<Type, object> pools = new Dictionary<Type, object>();
+
     private ObjectPooling<Package> packagePool;
     private ObjectPooling<Customer> customerPool;
+    private ObjectPooling<Trap> trapPool;
 
     private void Awake()
     {
@@ -29,17 +37,42 @@ public class PoolManager : MonoBehaviour
 
     private void Start()
     {
-        packagePool = new ObjectPooling<Package>(packagePrefab, packagePoolSize, transform);
-        customerPool = new ObjectPooling<Customer>(customerPrefab, customerPoolSize, transform);
+        pools[typeof(Package)] = new ObjectPooling<Package>(packagePrefab, packagePoolSize, transform);
+        pools[typeof(Customer)] = new ObjectPooling<Customer>(customerPrefab, customerPoolSize, transform);
+        pools[typeof(Trap)] = new ObjectPooling<Trap>(trapPrefab, trapPoolSize, transform);
     }
 
-    public void SpawnPackage(Vector3 position)
+    public T Spawn<T>(Vector3 position) where T : MonoBehaviour
     {
-        Package package = packagePool.Get();
-        package.transform.position = position;
+        var pool = GetPool<T>();
+        T obj = pool.Get();
+        obj.transform.position = position;
+        return obj;
     }
 
-    public void ReturnPackage(Package package)
+    public void Return<T>(T obj) where T : MonoBehaviour
+    {
+        var pool = GetPool<T>();
+        pool.Release(obj);
+    }
+
+    public void ClearPool<T>() where T : MonoBehaviour
+    {
+        var pool = GetPool<T>();
+        pool.ClearPool();
+    }
+
+    private ObjectPooling<T> GetPool<T>() where T : MonoBehaviour
+    {
+        if(pools.TryGetValue(typeof(T), out object poolType))
+        {
+            return poolType as ObjectPooling<T>;
+        }
+
+        return null;
+    }
+
+    /*public void ReturnPackage(Package package)
     {
         packagePool.Release(package);
     }
@@ -54,4 +87,20 @@ public class PoolManager : MonoBehaviour
     {
         customerPool.Release(customer);
     }
+
+    public void SpawnTraps(Vector3 position)
+    {
+        Trap trap = trapPool.Get();
+        trap.transform.position = position;
+    }
+
+    public void ReturnTrap(Trap trap)
+    {
+        trapPool.Release(trap);
+    }
+
+    public void ClearAllTraps()
+    {
+        trapPool.ClearPool();
+    }*/
 }

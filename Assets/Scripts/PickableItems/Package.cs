@@ -7,16 +7,16 @@ public class Package : MonoBehaviour
 {
     private void OnEnable()
     {
-        Driver.PlayerPackagePickUp += PackagePickedUp;
+        Driver.PackageEffectsEnable += PackagePickedUp;
     }
 
     private void PackagePickedUp()
     {
-        PoolManager.Instance.ReturnPackage(this);
+        PoolManager.Instance.Return(this);
     }
 
     private void OnDisable()
     {
-        Driver.PlayerPackagePickUp -= PackagePickedUp;
+        Driver.PackageEffectsEnable -= PackagePickedUp;
     }
 }
