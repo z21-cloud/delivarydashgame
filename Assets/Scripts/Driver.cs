@@ -8,7 +8,10 @@ public class Driver : MonoBehaviour
 {
     public static event Action PackageEffectsEnable;
     public static event Action PackageEffectsDisable;
+    public static event Action PackageBoostEnable;
+    public static event Action PackageBoostDisable;
     public bool HasPackage { get; private set; }
+    public bool BoostPackage { get; private set; }
 
     private void OnEnable()
     {
@@ -18,6 +21,7 @@ public class Driver : MonoBehaviour
     private void DeletePackage()
     {
         HasPackage = false;
+        BoostPackage = false;
         PackageEffectsDisable?.Invoke();   //  передать информацию клиенту, что пакет передался
     }
 
@@ -38,11 +42,28 @@ public class Driver : MonoBehaviour
             PackageEffectsDisable?.Invoke();   //  передать информацию клиенту, что пакет передался
         }
 
-        if(other.GetComponent<JumpData>())
+        if(other.GetComponent<BoostSpeed>() && !BoostPackage)
+        {
+            BoostPackage = true;
+            Debug.Log("boosted");
+            PackageBoostEnable?.Invoke();
+        }
+
+        if (other.GetComponent<JumpData>())
         {
             JumpData jumpData = other.GetComponent<JumpData>();
             Jump carJump = GetComponent<Jump>();
             carJump.CarJump(jumpData.JumpHeightScale, jumpData.JumpPushScale);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Obstacle") && BoostPackage)
+        {
+            BoostPackage = false;
+            Debug.Log("deboosted");
+            PackageBoostDisable?.Invoke();
         }
     }
 

@@ -10,9 +10,14 @@ public class PlayerParameters : MonoBehaviour
     public float MoveSpeed { get; private set; }
     public float RotationSpeed { get; private set; }
 
-    private void Update()
+    private void Start()
     {
         MoveSpeed = moveSpeed;
         RotationSpeed = rotationSpeed;
+    }
+
+    public void ChangeSpeed(float speed)
+    {
+        MoveSpeed = speed;
     }
 }
