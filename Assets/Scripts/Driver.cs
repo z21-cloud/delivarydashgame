@@ -9,13 +9,15 @@ public class Driver : MonoBehaviour
     public static event Action PackageEffectsEnable;
     public static event Action PackageEffectsDisable;
     public static event Action PackageBoostEnable;
-    public static event Action PackageBoostDisable;
     public bool HasPackage { get; private set; }
     public bool BoostPackage { get; private set; }
+
+    private float currentSpeed;
 
     private void OnEnable()
     {
         Trap.PlayerFellTrap += DeletePackage;
+        EnemyController.EnemyDeliveredPackage += DeletePackage;
     }
 
     private void DeletePackage()
@@ -59,16 +61,17 @@ public class Driver : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Obstacle") && BoostPackage)
+        if (BoostPackage)
         {
             BoostPackage = false;
             Debug.Log("deboosted");
-            PackageBoostDisable?.Invoke();
+            PlayerLocator.Player.GetComponent<PlayerParameters>().ChangeSpeed(5f); // dont won't to make another component for deboost. Can't add it to boost speed, because it destroys (backs to pool)
         }
     }
 
     private void OnDisable()
     {
         Trap.PlayerFellTrap -= DeletePackage;
+        EnemyController.EnemyDeliveredPackage -= DeletePackage;
     }
 }

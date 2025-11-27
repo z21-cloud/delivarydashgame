@@ -18,16 +18,6 @@ public class GizmoManager : MonoBehaviour
 
     private void Awake()
     {
-        //if(Instance != null && Instance != this)
-        //{
-        //    Destroy(gameObject);
-        //    Instance = null;
-        //}
-        //Instance = this;
-    }
-
-    private void Start()
-    {
         nodes = new Dictionary<Vector2Int, Node>();
 
         originMin = ground.GetComponent<SpriteRenderer>().bounds.min;
@@ -97,6 +87,16 @@ public class GizmoManager : MonoBehaviour
         }
     }
 
+    public Node GetNodeFromWorldPosition(Vector3 pos)
+    {
+        int tempX = Mathf.FloorToInt((pos.x - originMin.x) / nodeSize);
+        int tempY = Mathf.FloorToInt((pos.y - originMin.y) / nodeSize);
+        Vector2Int result = new Vector2Int(tempX, tempY);
+        if (nodes.ContainsKey(result)) return nodes[result];
+        Debug.LogWarning("No node found!");
+        return null;
+    }
+
     public void ResetAllNodes()
     {
         if (nodes.Count == 0)
@@ -110,13 +110,28 @@ public class GizmoManager : MonoBehaviour
         }
     }
 
+    public List<Node> GetAllNodes()
+    {
+        if (nodes == null)
+            Debug.LogWarning("Nodes are null!!");
+
+        List<Node> returnNodes = new List<Node>();
+        foreach (Node node in nodes.Values)
+        {
+            returnNodes.Add(node);
+        }
+
+        return returnNodes;
+    }
+
+
     /*private void OnDrawGizmos()
     {
         if (nodes == null) return;
         foreach (Node node in nodes.Values)
         {
             Gizmos.color = node.isObstacle ? Color.magenta : Color.red;
-            Gizmos.DrawCube(node.position, new Vector3(nodeSize / 2, nodeSize / 2));
+            Gizmos.DrawCube(node.worldPosition, new Vector3(nodeSize / 2, nodeSize / 2));
         }
     }*/
 }

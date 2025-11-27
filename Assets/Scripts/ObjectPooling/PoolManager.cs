@@ -21,10 +21,6 @@ public class PoolManager : MonoBehaviour
 
     private Dictionary<Type, object> pools = new Dictionary<Type, object>();
 
-    private ObjectPooling<Package> packagePool;
-    private ObjectPooling<Customer> customerPool;
-    private ObjectPooling<Trap> trapPool;
-
     private void Awake()
     {
         if(Instance != null && Instance != this)

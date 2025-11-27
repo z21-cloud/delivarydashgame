@@ -55,7 +55,7 @@ public class AStar : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("Path not found");
+        //Debug.LogWarning("Path not found");
         return null;
     }
 
